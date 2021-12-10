@@ -34,8 +34,8 @@ void Game::init(const char * title, int xpos, int ypos, int width, int height, b
     }
     
     
-    map1 = new movablemap("/Users/vatsal007/Documents/dungeon1.png",renderer,0,0);
-    playerTex = new Element("/Users/vatsal007/Documents/chaljaPlease/assets/hero.png",renderer,0,0,map1);
+    map1 = new movablemap("./assets/world_map.png",renderer,0,0);
+    playerTex = new Element("./assets/hero.png",renderer,0,0,map1);
     
 }
 void Game::update()

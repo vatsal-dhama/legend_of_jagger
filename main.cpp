@@ -1,32 +1,53 @@
+#include <SDL.h>
+#include <SDL_image.h>
+#include<SDL_mixer.h>
+#include "Game.hpp"
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
-#include "game.hpp"
 using namespace std;
-Game* game = NULL;
-int main(int argc, char* argv[])
+
+Game *game = NULL;
+
+int main(int argc, char* args[])
 {
+    
+    if (Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0)
+    {
+        std::cout << "Error: " << Mix_GetError() << std::endl;
+    }
+    Mix_Music* bgm = Mix_LoadMUS("C:\\IIITB\\Second year- first sem\\Cpp\\Project\\Rahul and anshul\\assets\\boss1.mp3");
+    
+    const int fps = 60;
+    const int frame_delay = 1000 / fps;
+
+    Uint32 frame_start;
+    int frame_time;
+
     game = new Game();
-        const int FPS = 30;
-        const int delay = 1000 / FPS; //time per frame
-        unsigned int st;
-        unsigned int timeperframe;
-        game->init("LOJ", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
-        while (game->running())
+    game->init(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
+    Mix_PlayMusic(bgm, -1);
+    while(game->running())
+    {
+        frame_start = SDL_GetTicks();
+
+        SDL_RenderClear(Game::renderer);        
+
+        game->handleEvents();
+        game->update();
+        game->render();
+
+        frame_time = SDL_GetTicks() - frame_start;
+
+        if(frame_delay > frame_time)
         {
-            st = SDL_GetTicks();
-            game->handleEvents();
-            game->update();
-            game->render();
-            timeperframe = SDL_GetTicks() - st;
-            if (timeperframe < delay)
-            {
-                SDL_Delay(delay - timeperframe);
-            }
+            SDL_Delay(frame_delay - frame_time);
         }
-        game->clean();
-        return 0;
+    }
+
+    game->clean();
+    Mix_FreeMusic(bgm);
+    bgm = nullptr;
+    
+
+    return 0;
 }
-
-
